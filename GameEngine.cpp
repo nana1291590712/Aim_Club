@@ -1,13 +1,11 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB)
+GameEngine::GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB, int mode)
     : _lcd(lcd), _joystick(joystick), _buttonA(buttonA), _buttonB(buttonB),
-      _aim(lcd, joystick, buttonB), _target(lcd) {
+      _aim(lcd, joystick, buttonB), _target(lcd), _mode(mode) {
     _gameOver = false;
-    _mode = 0;          // 默认 timed 模式
-    _timeLimit = 30.0f; // 30 秒限时
+    _timeLimit = 10.0f; // 默认限时
 }
-
 void GameEngine::init() {
     _aim.init();
     _target.init();
@@ -25,13 +23,13 @@ void GameEngine::run() {
 
 void GameEngine::update() {
     _aim.update();
-    _target.move();  // 缓慢移动
+    _target.move();
 
     if (_aim.isFired()) {
         checkGameState();
     }
 
-    // 修正 deprecated read() 用法
+    // 如果是 timed 模式，检查时间限制
     if (_mode == 0 && std::chrono::duration<float>(_gameTimer.elapsed_time()).count() >= _timeLimit) {
         _gameOver = true;
     }
