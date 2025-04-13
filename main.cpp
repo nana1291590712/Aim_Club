@@ -18,19 +18,18 @@ DigitalOut greenLED(PC_6); // Shooting feedback
 
 // ------------ 函数原型 -----------------
 void init();
-void welcome();
+int welcome();  // 返回所选模式
 void game_over();
 
 int main() {
-    init();      // 初始化设备
-    welcome();   // 等待玩家按下开始按钮
-    
-    // 创建并启动游戏引擎
-    GameEngine game(lcd, joystick, buttonA, buttonB);
+    init();      
+    int selectedMode = welcome();  // 获取玩家选择的模式
+
+    GameEngine game(lcd, joystick, buttonA, buttonB, selectedMode);  // 传入模式
     game.init();
     game.run();
 
-    game_over(); // 游戏结束界面
+    game_over(); 
 }
 
 void init() {
@@ -39,15 +38,57 @@ void init() {
     joystick.init(); 
 }
 
-void welcome() {
-    lcd.printString("Game Start!", 0, 1);  
-    lcd.printString("Press Nucleo", 0, 3);
-    lcd.printString("Blue button", 0, 4);
-    lcd.refresh();
+int welcome() {
+    int selectedMode = -1;
+    
+    while (selectedMode == -1) {
+        lcd.clear();
+        lcd.printString("Aim Club", 0, 0);   
+        lcd.printString("Press ButtonC", 0, 2); 
+        lcd.printString("Timed Mode", 0, 3);
+        lcd.printString("Press ButtonD", 0, 4);
+        lcd.printString("Endless Mode", 0, 5);
+        lcd.refresh();
 
-    while (buttonA.read() == 1) {
+        // 检查按钮状态
+        if (buttonC.read() == 1) {
+            selectedMode = 0; // Timed Mode
+            while (buttonC.read() == 0) {
+                ThisThread::sleep_for(20ms);
+            }
+        } 
+        if (buttonD.read() == 1) {
+            selectedMode = 1; // Endless Mode
+            while (buttonD.read() == 0) {
+                ThisThread::sleep_for(20ms);
+            }
+        }
+
         ThisThread::sleep_for(100ms);
     }
+
+    // 确认模式 + 等待蓝色按钮
+    lcd.clear();
+    if (selectedMode == 0) {
+        lcd.printString("Timed Mode", 0, 0);
+    } else {
+        lcd.printString("Endless Mode", 0, 0);
+    }
+    lcd.printString("Press", 0, 3);
+    lcd.printString("Blue Button", 0, 4);
+    lcd.refresh();
+
+    // 等待蓝色按钮按下
+    while (buttonA.read() == 1) {
+        ThisThread::sleep_for(50ms);
+    }
+
+    // 等待释放
+    while (buttonA.read() == 0) {
+        ThisThread::sleep_for(20ms);
+    }
+
+    return selectedMode;
 }
 
 void game_over() {
