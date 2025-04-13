@@ -1,20 +1,25 @@
 #include "Target.h"
-#include "math.h"
-
-#define PI 3.14159265358979323846f
+#include <cmath>
 
 Target::Target(N5110 &lcd) : _lcd(lcd) {
-    _size = 3;  // Base size (radius for circle)
+    _size = 3;
+    _moveInterval = 200;
+    _direction = {1, 1};
 }
 
 void Target::init() {
-    srand(time(NULL));  // Seed random number generator
+    srand(time(NULL));
     _size = 3;
+    _timer.start();
+    _lastMoveTime = 0ms;
+    generate();
 }
 
 void Target::generate() {
     randomizePosition();
-    _type = rand() % 3;  // Randomly select square/triangle/circle
+    _type = rand() % 3;
+    randomizeDirection();
+    _lastMoveTime = std::chrono::duration_cast<std::chrono::milliseconds>(_timer.elapsed_time());
 }
 
 void Target::draw() {
@@ -31,17 +36,10 @@ bool Target::checkHit(Position2D pos) {
     int distanceSquared = dx * dx + dy * dy;
 
     switch (_type) {
-        case 0:  // Hollow 7x7 square → only hit if center is on the border
-            return (abs(dx) == 3 && abs(dy) <= 3) || (abs(dy) == 3 && abs(dx) <= 3);
-
-        case 1:  // Triangle approximation
-            return (dy >= -4 && dy <= 0) && (abs(dx) <= ((3 * (4 + dy)) / 4));
-
-        case 2:  // Circle, radius 3
-            return distanceSquared <= 9;
-
-        default:
-            return false;
+        case 0: return (abs(dx) == 3 && abs(dy) <= 3) || (abs(dy) == 3 && abs(dx) <= 3);
+        case 1: return (dy >= -4 && dy <= 0) && (abs(dx) <= ((3 * (4 + dy)) / 4));
+        case 2: return distanceSquared <= 9;
+        default: return false;
     }
 }
 
@@ -54,23 +52,18 @@ int Target::getSize() {
 }
 
 void Target::drawSquare() {
-    // Draw a 7x7 hollow square
-    int size = 7;
-    _lcd.drawRect(_position.x, _position.y, size, size, FILL_TRANSPARENT);
+    _lcd.drawRect(_position.x, _position.y, 7, 7, FILL_TRANSPARENT);
 }
 
 void Target::drawTriangle() {
-    // Triangle with base 7 and height 4
-    int baseHalf = 4;  // 8 / 2
+    int baseHalf = 4;
     int height = 5;
-
     int x1 = _position.x;
     int y1 = _position.y - height;
     int x2 = _position.x - baseHalf;
     int y2 = _position.y;
     int x3 = _position.x + baseHalf;
     int y3 = _position.y;
-
     _lcd.drawLine(x1, y1, x2, y2, 1);
     _lcd.drawLine(x2, y2, x3, y3, 1);
     _lcd.drawLine(x3, y3, x1, y1, 1);
@@ -81,7 +74,28 @@ void Target::drawCircle() {
 }
 
 void Target::randomizePosition() {
-    int margin = 4 + 2;  // 4 for half of max shape, 2 for extra padding
+    int margin = 6;
     _position.x = margin + rand() % (84 - 2 * margin);
     _position.y = margin + rand() % (48 - 2 * margin);
+}
+
+void Target::randomizeDirection() {
+    _direction.x = (rand() % 3) - 1;
+    _direction.y = (rand() % 3) - 1;
+    if (_direction.x == 0 && _direction.y == 0) {
+        _direction.x = 1;
+    }
+}
+
+void Target::move() {
+    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(_timer.elapsed_time());
+    if ((now - _lastMoveTime).count() >= _moveInterval) {
+        _position.x += _direction.x;
+        _position.y += _direction.y;
+
+        if (_position.x < 4 || _position.x > 80) _direction.x *= -1;
+        if (_position.y < 4 || _position.y > 44) _direction.y *= -1;
+
+        _lastMoveTime = now;
+    }
 }

@@ -10,20 +10,23 @@
 
 class GameEngine {
 public:
-    // In GameEngine.h
-GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB);
+    GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB);
     void init();
     void run();
 
 private:
-    // In GameEngine.h private section
-    DigitalIn &_buttonA;
     N5110 &_lcd;
     Joystick &_joystick;
+    DigitalIn &_buttonA;
     InterruptIn &_buttonB;
+
     Aim _aim;
     Target _target;
+
+    Timer _gameTimer;
     bool _gameOver;
+    int _mode;          // 0 = timed, 1 = endless
+    float _timeLimit;   // 秒数限制
 
     void update();
     void draw();
