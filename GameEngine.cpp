@@ -4,7 +4,7 @@ GameEngine::GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, Inter
     : _lcd(lcd), _joystick(joystick), _buttonA(buttonA), _buttonB(buttonB),
       _aim(lcd, joystick, buttonB), _target(lcd), _mode(mode) {
     _gameOver = false;
-    _timeLimit = 10.0f; // 默认限时
+    _timeLimit = 30.0f; // 默认限时
 }
 void GameEngine::init() {
     _aim.init();
