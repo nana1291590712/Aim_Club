@@ -52,12 +52,12 @@ int Target::getSize() {
 }
 
 void Target::drawSquare() {
-    _lcd.drawRect(_position.x, _position.y, 7, 7, FILL_TRANSPARENT);
+    _lcd.drawRect(_position.x, _position.y, 8, 8, FILL_TRANSPARENT);
 }
 
 void Target::drawTriangle() {
-    int baseHalf = 4;
-    int height = 5;
+    int baseHalf = 6;
+    int height = 7;
     int x1 = _position.x;
     int y1 = _position.y - height;
     int x2 = _position.x - baseHalf;
@@ -70,7 +70,7 @@ void Target::drawTriangle() {
 }
 
 void Target::drawCircle() {
-    _lcd.drawCircle(_position.x, _position.y, 3, FILL_TRANSPARENT);
+    _lcd.drawCircle(_position.x, _position.y, 4, FILL_TRANSPARENT);
 }
 
 void Target::randomizePosition() {
