@@ -1,3 +1,4 @@
+
 #include "Target.h"
 #include <cmath>
 
@@ -93,8 +94,23 @@ void Target::move() {
         _position.x += _direction.x;
         _position.y += _direction.y;
 
-        if (_position.x < 4 || _position.x > 80) _direction.x *= -1;
-        if (_position.y < 4 || _position.y > 44) _direction.y *= -1;
+        // 根据不同类型设置不同的边界检测
+        switch (_type) {
+            case 0: // 正方形 (8x8)
+                if (_position.x <= 4 || _position.x >= 84 - 8) _direction.x *= -1;
+                if (_position.y <= 4 || _position.y >= 48 - 8) _direction.y *= -1;
+                break;
+                
+            case 1: // 三角形 (底边12像素，高7像素)
+                if (_position.x <= 6 || _position.x >= 84 - 6) _direction.x *= -1;
+                if (_position.y <= 7 || _position.y >= 48) _direction.y *= -1;
+                break;
+                
+            case 2: // 圆形 (半径4)
+                if (_position.x <= 4 || _position.x >= 84 - 4) _direction.x *= -1;
+                if (_position.y <= 4 || _position.y >= 48 - 4) _direction.y *= -1;
+                break;
+        }
 
         _lastMoveTime = now;
     }
