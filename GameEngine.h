@@ -10,7 +10,7 @@
 
 class GameEngine {
 public:
-    GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB);
+    GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB, int mode);
     void init();
     void run();
 
