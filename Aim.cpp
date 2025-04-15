@@ -14,11 +14,45 @@ void Aim::init() {
 }
 
 void Aim::_fireHandler() {
-    if (_debounceTimer.elapsed_time() > 50ms) {  // 防抖处理
+    if (_debounceTimer.elapsed_time() > 300ms) {  // 防抖处理
         _fireTriggered = true;
         _debounceTimer.reset();
     }
 }
+
+void Aim::drawExplosionAnimation() {
+    int x = _position.x;
+    int y = _position.y;
+
+    for (int r = 1; r <= 3; r++) {
+        // 画爆炸扩散点
+        _lcd.setPixel(x + r, y, 1);
+        _lcd.setPixel(x - r, y, 1);
+        _lcd.setPixel(x, y + r, 1);
+        _lcd.setPixel(x, y - r, 1);
+        _lcd.setPixel(x + r, y + r, 1);
+        _lcd.setPixel(x - r, y - r, 1);
+        _lcd.setPixel(x + r, y - r, 1);
+        _lcd.setPixel(x - r, y + r, 1);
+
+        _lcd.refresh();
+        ThisThread::sleep_for(200ms);
+
+        // 擦除这些点（使用 setPixel(x,y,false)）
+        _lcd.setPixel(x + r, y, false);
+        _lcd.setPixel(x - r, y, false);
+        _lcd.setPixel(x, y + r, false);
+        _lcd.setPixel(x, y - r, false);
+        _lcd.setPixel(x + r, y + r, false);
+        _lcd.setPixel(x - r, y - r, false);
+        _lcd.setPixel(x + r, y - r, false);
+        _lcd.setPixel(x - r, y + r, false);
+    }
+
+    _lcd.refresh();
+}
+
+
 
 bool Aim::isFired() {
     if (_fireTriggered) {
