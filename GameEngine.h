@@ -10,7 +10,7 @@
 
 class GameEngine {
 public:
-    GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB, int mode);
+    GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB, int mode, DigitalOut redLEDs[], DigitalOut &greenLED);
     void init();
     void run();
 
@@ -22,15 +22,22 @@ private:
 
     Aim _aim;
     Target _target;
+    DigitalOut *_redLEDs;      // Array of red LEDs for lives
+    DigitalOut &_greenLED;     // Green LED for hit feedback
 
     Timer _gameTimer;
     bool _gameOver;
-    int _mode;          // 0 = timed, 1 = endless
-    float _timeLimit;   // 秒数限制
+    int _mode;                 // 0 = timed, 1 = endless
+    float _timeLimit;          // Time limit in seconds
+    int _lives;                // Player lives count
 
     void update();
     void draw();
     void checkGameState();
+    void updateLivesDisplay();
+    void loseLife();
+    void flashGreenLED();      // Flash green LED for feedback
+
 };
 
 #endif
