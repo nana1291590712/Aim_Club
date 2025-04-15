@@ -6,6 +6,9 @@ GameEngine::GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, Inter
     _gameOver = false;
     _timeLimit = 30.0f; // 默认限时
     _lives = 3;         // 初始生命值
+    _squareHits = 0;    // 初始化正方形命中次数
+    _triangleHits = 0;  // 初始化三角形命中次数
+    _circleHits = 0;    // 初始化圆形命中次数
 }
 
 void GameEngine::init() {
@@ -42,7 +45,6 @@ void GameEngine::loseLife() {
     }
 }
 
-
 void GameEngine::run() {
     while (!_gameOver) {
         update();
@@ -66,15 +68,16 @@ void GameEngine::update() {
 }
 
 void GameEngine::checkGameState() {
-    Position2D center = _aim.getPosition();
+    Position2D aimPos = _aim.getPosition();
 
-    _aim.drawExplosionAnimation();  // 添加射击动画
+    _aim.drawExplosionAnimation();
 
-    if (_target.checkHit(center)) {
-        flashGreenLED();       // 命中反馈
-        _target.generate();    // 新目标
+    if (_target.checkHit(aimPos)) {
+        flashGreenLED();
+        handleHit(aimPos);  // 先处理命中逻辑
+        _target.generate(); // 然后生成新目标
     } else {
-        loseLife();            // 扣血反馈
+        loseLife();         // 未命中才扣血
     }
 }
 
@@ -92,4 +95,23 @@ void GameEngine::draw() {
     _target.draw();
     _aim.draw();
     _lcd.refresh();
+}
+
+void GameEngine::getStats(int &score, int &circleCount, int &squareCount, int &triangleCount) {
+    circleCount = _circleHits;
+    squareCount = _squareHits;
+    triangleCount = _triangleHits;
+    score = _circleHits * 1 + _squareHits * 2 + _triangleHits * 3;
+}
+
+void GameEngine::handleHit(Position2D aimPos) {
+    if (_target.checkHit(aimPos)) {  // 再次确认命中
+        int type = _target.getType();
+        
+        switch (type) {
+            case 0: _squareHits++; break;
+            case 1: _triangleHits++; break;
+            case 2: _circleHits++; break;
+        }
+    }
 }
