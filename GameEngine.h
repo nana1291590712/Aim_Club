@@ -13,6 +13,8 @@ public:
     GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB, int mode, DigitalOut redLEDs[], DigitalOut &greenLED);
     void init();
     void run();
+    void handleHit(Position2D aimPos);
+    void getStats(int &score, int &circleCount, int &squareCount, int &triangleCount);
 
 private:
     N5110 &_lcd;
@@ -37,6 +39,10 @@ private:
     void updateLivesDisplay();
     void loseLife();
     void flashGreenLED();      // Flash green LED for feedback
+
+    int _circleHits = 0;
+    int _squareHits = 0;
+    int _triangleHits = 0;
 
 };
 
