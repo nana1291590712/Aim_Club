@@ -130,3 +130,7 @@ void Target::move() {
         _lastMoveTime = now;
     }
 }
+
+int Target::getType() {
+    return _type;
+}
