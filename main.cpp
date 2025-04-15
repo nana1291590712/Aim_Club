@@ -21,16 +21,24 @@ void init();
 int welcome();  // 返回所选模式
 void game_over();
 
+// main.cpp
 int main() {
     init();      
     int selectedMode = welcome();  // 获取玩家选择的模式
 
-    GameEngine game(lcd, joystick, buttonA, buttonB, selectedMode);  // 传入模式
+    // Turn on all red LEDs initially
+    for (int i = 0; i < 3; i++) {
+        redLEDs[i] = 1;
+    }
+
+    GameEngine game(lcd, joystick, buttonA, buttonB, selectedMode, redLEDs, greenLED);  // 传入模式和LEDs
     game.init();
     game.run();
 
     game_over(); 
 }
+
+// ... rest of the file remains the same ...
 
 void init() {
     lcd.init(LPH7366_1);
