@@ -35,12 +35,27 @@ bool Target::checkHit(Position2D pos) {
     int dx = pos.x - _position.x;
     int dy = pos.y - _position.y;
     int distanceSquared = dx * dx + dy * dy;
+    int maxX;  // Declare maxX outside the switch for triangle case
 
     switch (_type) {
-        case 0: return (abs(dx) == 3 && abs(dy) <= 3) || (abs(dy) == 3 && abs(dx) <= 3);
-        case 1: return (dy >= -4 && dy <= 0) && (abs(dx) <= ((3 * (4 + dy)) / 4));
-        case 2: return distanceSquared <= 9;
-        default: return false;
+        case 0: // Square (8x8)
+            // Check if within the square's bounds
+            return (abs(dx) <= 5 && abs(dy) <= 5);
+            
+        case 1: // Triangle (base 12px, height 7px)
+            // Triangle specific check:
+            // The apex is at (_position.x, _position.y - 7)
+            // The base goes from (_position.x-6, _position.y) to (_position.x+6, _position.y)
+            if (dy > 0 || dy < -7) return false; // Outside vertical bounds
+            // Calculate the horizontal bounds based on y position
+            maxX = (6 * (7 + dy)) / 7; // Linearly decreases from 6 at top to 0 at bottom
+            return abs(dx) <= maxX;
+            
+        case 2: // Circle (radius 4)
+            return distanceSquared <= 16; // 4^2 = 16
+            
+        default:
+            return false;
     }
 }
 
