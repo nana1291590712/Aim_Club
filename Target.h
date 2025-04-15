@@ -1,3 +1,4 @@
+
 #ifndef TARGET_H
 #define TARGET_H
 
@@ -14,6 +15,7 @@ public:
     bool checkHit(Position2D pos);
     Position2D getPosition();
     int getSize();
+    int getType();  // 新增：获取目标类型
     void move();  // 新增：缓慢移动
 
 private:
