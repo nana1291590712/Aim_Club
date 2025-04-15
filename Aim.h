@@ -12,6 +12,7 @@ public:
     void init();
     void update();
     void draw();
+    void drawExplosionAnimation();
     bool isFired();
     Position2D getPosition();
     Position2D getCenterPosition();
