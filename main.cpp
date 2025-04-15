@@ -19,9 +19,9 @@ DigitalOut greenLED(PC_6); // Shooting feedback
 // ------------ 函数原型 -----------------
 void init();
 int welcome();  // 返回所选模式
-void game_over();
+void game_over(GameEngine &game);
+void show_stats(GameEngine &game);
 
-// main.cpp
 int main() {
     init();      
     int selectedMode = welcome();  // 获取玩家选择的模式
@@ -31,14 +31,12 @@ int main() {
         redLEDs[i] = 1;
     }
 
-    GameEngine game(lcd, joystick, buttonA, buttonB, selectedMode, redLEDs, greenLED);  // 传入模式和LEDs
+    GameEngine game(lcd, joystick, buttonA, buttonB, selectedMode, redLEDs, greenLED);
     game.init();
     game.run();
 
-    game_over(); 
+    game_over(game); 
 }
-
-// ... rest of the file remains the same ...
 
 void init() {
     lcd.init(LPH7366_1);
@@ -99,14 +97,50 @@ int welcome() {
     return selectedMode;
 }
 
-void game_over() {
-    while (true) {
+void game_over(GameEngine &game) {
+    // 闪烁三次"Game Over"
+    for (int i = 0; i < 3; i++) {
         lcd.clear();
         lcd.printString("  Game Over ", 0, 2);  
         lcd.refresh();
-        ThisThread::sleep_for(250ms);
+        ThisThread::sleep_for(500ms);
         lcd.clear();
         lcd.refresh();
-        ThisThread::sleep_for(250ms);
+        ThisThread::sleep_for(500ms);
+    }
+    
+    // 显示统计信息
+    show_stats(game);
+}
+
+void show_stats(GameEngine &game) {
+    int score, circleCount, squareCount, triangleCount;
+    game.getStats(score, circleCount, squareCount, triangleCount);
+    
+    while (1) {
+        lcd.clear();
+        
+        // 显示分数
+        char scoreStr[20];
+        sprintf(scoreStr, "Score: %d", score);
+        lcd.printString(scoreStr, 0, 0);
+        
+        // 显示圆形击中数
+        char circleStr[20];
+        sprintf(circleStr, "Circle: %d", circleCount);
+        lcd.printString(circleStr, 0, 1);
+        
+        // 显示正方形击中数
+        char squareStr[20];
+        sprintf(squareStr, "Square: %d", squareCount);
+        lcd.printString(squareStr, 0, 2);
+        
+        // 显示三角形击中数
+        char triangleStr[20];
+        sprintf(triangleStr, "Triangle: %d", triangleCount);
+        lcd.printString(triangleStr, 0, 3);
+        
+        lcd.refresh();
+        ThisThread::sleep_for(100ms);
     }
 }
