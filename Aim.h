@@ -18,17 +18,21 @@ public:
     Position2D getCenterPosition();
     int getSize();
 
+    void setSpeedMultiplier(float multiplier);  // <--- 新增：设置速度倍率
+
 private:
     N5110 &_lcd;
     Joystick &_joystick;
     InterruptIn &_buttonB;
     Position2D _position;
     int _size;
-    volatile bool _fireTriggered;  // 中断标记射击状态
+    volatile bool _fireTriggered;
     Timer _debounceTimer;
 
+    float _speedMultiplier;  // <--- 新增：速度倍率
+
     void constrainPosition();
-    void _fireHandler();  // 中断回调函数
+    void _fireHandler();
 };
 
 #endif

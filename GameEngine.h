@@ -7,6 +7,7 @@
 #include "Aim.h"
 #include "Target.h"
 #include "Utils.h"
+#include "SpecialTarget.h"
 
 class GameEngine {
 public:
@@ -24,26 +25,37 @@ private:
 
     Aim _aim;
     Target _target;
-    DigitalOut *_redLEDs;      // Array of red LEDs for lives
-    DigitalOut &_greenLED;     // Green LED for hit feedback
+    SpecialTarget _specialTarget;
+
+    DigitalOut *_redLEDs;
+    DigitalOut &_greenLED;
 
     Timer _gameTimer;
+    Timer _effectTimer;
+
     bool _gameOver;
-    int _mode;                 // 0 = timed, 1 = endless
-    float _timeLimit;          // Time limit in seconds
-    int _lives;                // Player lives count
+    int _mode;                // 0 = timed, 1 = endless
+    float _timeLimit;
+    int _lives;
+
+    bool _freezeTargets;
+    bool _slowAim;
+    bool _effectMessageShown;
+    float _nextSpecialTime;
+
+    int _circleHits;
+    int _squareHits;
+    int _triangleHits;
 
     void update();
     void draw();
     void checkGameState();
     void updateLivesDisplay();
     void loseLife();
-    void flashGreenLED();      // Flash green LED for feedback
+    void flashGreenLED();
 
-    int _circleHits = 0;
-    int _squareHits = 0;
-    int _triangleHits = 0;
-
+    void applyEffect(SpecialEffect effect);
+    void drawEffectMessage();
 };
 
 #endif
