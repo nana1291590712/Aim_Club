@@ -31,7 +31,10 @@ void SpecialTarget::update() {
 void SpecialTarget::draw() {
     if (!_active) return;
 
+    // 绘制7x7的正方形边框
     _lcd.drawRect(_pos.x - 3, _pos.y - 3, 7, 7, FILL_TRANSPARENT);
+    
+    // 绘制更清晰美观的问号
     drawQuestionMark(_pos);
 }
 
@@ -52,9 +55,20 @@ SpecialEffect SpecialTarget::getEffect() {
 }
 
 void SpecialTarget::drawQuestionMark(Position2D center) {
+    // 清除原有点阵绘制方式，改用更清晰的问号
+    
+    // 问号顶部圆弧
     _lcd.setPixel(center.x, center.y - 2);
-    _lcd.setPixel(center.x, center.y - 1);
-    _lcd.setPixel(center.x + 1, center.y);
-    _lcd.setPixel(center.x, center.y + 1);
-    _lcd.setPixel(center.x, center.y + 3);
+    _lcd.setPixel(center.x - 1, center.y - 1);
+    _lcd.setPixel(center.x + 1, center.y - 1);
+    
+    // 问号中间点
+    _lcd.setPixel(center.x, center.y);
+    
+    // 问号底部点
+    _lcd.setPixel(center.x, center.y + 2);
+    
+    // 可选：添加更多像素点使问号更明显
+    _lcd.setPixel(center.x - 1, center.y - 2);
+    _lcd.setPixel(center.x + 1, center.y - 2);
 }
