@@ -1,3 +1,4 @@
+
 #include "SpecialTarget.h"
 
 SpecialTarget::SpecialTarget(N5110 &lcd) : _lcd(lcd), _active(false), _duration(5000) {}
@@ -6,14 +7,24 @@ void SpecialTarget::init() {
     _active = false;
 }
 
-void SpecialTarget::generate() {
+void SpecialTarget::generate(int mode) {
     _pos.x = rand() % (84 - 10) + 5;
     _pos.y = rand() % (48 - 10) + 5;
     _active = true;
-    _effect = static_cast<SpecialEffect>(rand() % 3);
+
+    if (mode == 0) {
+        _effect = static_cast<SpecialEffect>(rand() % 3); // 0~2
+    } else {
+        int r = rand() % 3;
+        if (r == 0) _effect = SpecialEffect::FreezeTargets;
+        else if (r == 1) _effect = SpecialEffect::SlowAim;
+        else _effect = SpecialEffect::AddLife;
+    }
+
     _timer.reset();
     _timer.start();
 }
+
 
 bool SpecialTarget::isActive() {
     if (_active && _timer.elapsed_time() >= 5000ms) {

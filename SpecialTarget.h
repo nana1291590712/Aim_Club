@@ -1,3 +1,4 @@
+
 #ifndef SPECIAL_TARGET_H
 #define SPECIAL_TARGET_H
 
@@ -6,10 +7,12 @@
 #include "Utils.h"
 
 enum class SpecialEffect {
-    AddTime,
+    AddTime,         // 限时模式专用
     FreezeTargets,
-    SlowAim
+    SlowAim,
+    AddLife          // 无尽模式专用
 };
+
 
 class SpecialTarget {
 public:
@@ -18,7 +21,7 @@ public:
     void update();
     void draw();
     bool isActive();
-    void generate();
+    void generate(int mode);
     bool checkHit(Position2D aimPos);
     SpecialEffect getEffect();
 

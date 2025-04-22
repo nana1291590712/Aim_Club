@@ -7,7 +7,7 @@
 // 可配置参数
 #define MAX_SPEED 3.3f        // 最大移动速度（原为 5.0f，降低了 1/3）
 #define ACCELERATION 0.2f     // 加速度系数
-#define SENSITIVITY 1.5f      // 灵敏度系数
+#define SENSITIVITY 1.0f      // 灵敏度系数
 
 class Joystick {
 public:

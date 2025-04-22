@@ -1,10 +1,11 @@
+
 #include "GameEngine.h"
 
 GameEngine::GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, InterruptIn &buttonB, int mode, DigitalOut redLEDs[], DigitalOut &greenLED)
     : _lcd(lcd), _joystick(joystick), _buttonA(buttonA), _buttonB(buttonB),
       _aim(lcd, joystick, buttonB), _target(lcd), _specialTarget(lcd), _mode(mode), _redLEDs(redLEDs), _greenLED(greenLED) {
     _gameOver = false;
-    _timeLimit = 30.0f;
+    _timeLimit = 50.0f;
     _lives = 3;
 
     _circleHits = 0;
@@ -14,7 +15,7 @@ GameEngine::GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, Inter
     _freezeTargets = false;
     _slowAim = false;
     _effectMessageShown = false;
-    _nextSpecialTime = 10.0f;
+    _nextSpecialTime = 5.0f;
 }
 
 void GameEngine::init() {
@@ -67,11 +68,12 @@ void GameEngine::update() {
 
     float elapsed = std::chrono::duration<float>(_gameTimer.elapsed_time()).count();
 
-    if (_mode == 0 && elapsed >= _nextSpecialTime && !_specialTarget.isActive()) {
-        _specialTarget.generate();
-        _nextSpecialTime += 10.0f;
-        _effectMessageShown = false;
-    }
+    if (elapsed >= _nextSpecialTime && !_specialTarget.isActive()) {
+         _specialTarget.generate(_mode);  // 传入模式
+         _nextSpecialTime += 10.0f;
+         _effectMessageShown = false;
+}
+
 
     _specialTarget.update();
 
@@ -146,7 +148,7 @@ void GameEngine::applyEffect(SpecialEffect effect) {
             _timeLimit += 15.0f;
             break;
         case SpecialEffect::FreezeTargets:
-            _freezeTargets = true;  // 仅冻结当前目标
+            _freezeTargets = true;
             break;
         case SpecialEffect::SlowAim:
             _slowAim = true;
@@ -154,12 +156,18 @@ void GameEngine::applyEffect(SpecialEffect effect) {
             _effectTimer.reset();
             _effectTimer.start();
             break;
+        case SpecialEffect::AddLife:
+            if (_lives < 3) {
+                _redLEDs[_lives] = 1;
+                _lives++;
+            }
+            break;
     }
     _effectMessageShown = true;
 }
 
 void GameEngine::drawEffectMessage() {
-    if (_mode == 0 && _effectMessageShown) {
+    if (_effectMessageShown) {
         static Timer blinkTimer;
         static int blinkCount = 0;
         static bool messageVisible = true;
@@ -188,13 +196,20 @@ void GameEngine::drawEffectMessage() {
                 case SpecialEffect::AddTime:
                     _lcd.printString("+15s!", 30, 0);
                     break;
+                case SpecialEffect::AddLife:
+                    _lcd.printString("+1 Life!", 24, 0);
+                    break;
                 case SpecialEffect::FreezeTargets:
                     _lcd.printString("FREEZE!", 28, 0);
                     break;
                 case SpecialEffect::SlowAim:
                     _lcd.printString("STOP!", 32, 0);
                     break;
+                default:
+                    break;  // 安全兜底
             }
         }
     }
 }
+
+
