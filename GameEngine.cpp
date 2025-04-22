@@ -110,8 +110,10 @@ void GameEngine::draw() {
     if (_effectMessageShown) {
         drawEffectMessage();
     }
+    drawTimeLeft();
     _lcd.refresh();
 }
+
 
 void GameEngine::flashGreenLED() {
     for (int i = 0; i < 2; i++) {
@@ -197,10 +199,10 @@ void GameEngine::drawEffectMessage() {
                     _lcd.printString("+15s!", 30, 0);
                     break;
                 case SpecialEffect::AddLife:
-                    _lcd.printString("+1 Life!", 24, 0);
+                    _lcd.printString("LIVES+1!", 24, 0);
                     break;
                 case SpecialEffect::FreezeTargets:
-                    _lcd.printString("FREEZE!", 28, 0);
+                    _lcd.printString("FREEZE!", 24, 0);
                     break;
                 case SpecialEffect::SlowAim:
                     _lcd.printString("STOP!", 32, 0);
@@ -212,4 +214,13 @@ void GameEngine::drawEffectMessage() {
     }
 }
 
+void GameEngine::drawTimeLeft() {
+    if (_mode == 0) {  // TIMED 模式
+        int secondsLeft = static_cast<int>(_timeLimit - std::chrono::duration_cast<std::chrono::seconds>(_gameTimer.elapsed_time()).count());
+        if (secondsLeft < 0) secondsLeft = 0;
 
+        char buffer[14];
+        sprintf(buffer, "%2ds", secondsLeft);
+        _lcd.printString(buffer, 66, 0);  // 右上角显示时间
+    }
+}

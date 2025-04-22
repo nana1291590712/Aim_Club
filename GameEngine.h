@@ -57,6 +57,7 @@ private:
 
     void applyEffect(SpecialEffect effect);
     void drawEffectMessage();
+    void drawTimeLeft();
 };
 
 #endif
