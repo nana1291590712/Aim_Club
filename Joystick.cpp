@@ -20,7 +20,7 @@ Vector2D Joystick::_get_raw_coord() {
     float y = 2.0f * (vert->read() - _y0);
 
     // 确保 y 方向正确
-    return {x, y};  // 修正：不反转 Y 方向
+    return {x, y};  
 }
 
 Vector2D Joystick::_smooth_movement(Vector2D input) {
@@ -42,7 +42,7 @@ Vector2D Joystick::_smooth_movement(Vector2D input) {
 
 Vector2D Joystick::get_mapped_coord() {
     Vector2D raw = _get_raw_coord();
-    return _smooth_movement(raw);  // 已取消死区处理
+    return _smooth_movement(raw);  
 }
 
 Direction Joystick::get_direction() {
