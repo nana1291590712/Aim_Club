@@ -18,7 +18,7 @@ public:
     Position2D getCenterPosition();
     int getSize();
 
-    void setSpeedMultiplier(float multiplier);  // <--- 新增：设置速度倍率
+    void setSpeedMultiplier(float multiplier);  // 设置速度倍率
 
 private:
     N5110 &_lcd;
@@ -29,7 +29,7 @@ private:
     volatile bool _fireTriggered;
     Timer _debounceTimer;
 
-    float _speedMultiplier;  // <--- 新增：速度倍率
+    float _speedMultiplier;  //速度倍率
 
     void constrainPosition();
     void _fireHandler();
