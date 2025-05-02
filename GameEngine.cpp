@@ -5,7 +5,7 @@ GameEngine::GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, Inter
     : _lcd(lcd), _joystick(joystick), _buttonA(buttonA), _buttonB(buttonB),
       _aim(lcd, joystick, buttonB), _target(lcd), _specialTarget(lcd), _mode(mode), _redLEDs(redLEDs), _greenLED(greenLED) {
     _gameOver = false;
-    _timeLimit = 50.0f;
+    _timeLimit = 30.0f;
     _lives = 3;
 
     _circleHits = 0;
@@ -15,7 +15,7 @@ GameEngine::GameEngine(N5110 &lcd, Joystick &joystick, DigitalIn &buttonA, Inter
     _freezeTargets = false;
     _slowAim = false;
     _effectMessageShown = false;
-    _nextSpecialTime = 5.0f;
+    _nextSpecialTime = 10.0f;
 }
 
 void GameEngine::init() {
